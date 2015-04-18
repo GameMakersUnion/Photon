@@ -14,14 +14,16 @@ public class Emitter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         Vector3 cursorPos = Input.mousePosition;
         Vector3 clickPosAtCamera = Camera.main.ScreenToWorldPoint(cursorPos);
         Vector3 clickPos = new Vector3(clickPosAtCamera.x, clickPosAtCamera.y, transform.position.z);
         Debug.Log(clickPos);
-        //if (Input.GetMouseButtonDown(0))
+        MakeLine();
+        if (Input.GetMouseButtonDown(0))
         {
 
-            line.SetPosition(1, clickPos);
+            list.Add(clickPos);
         }
 
 	}
@@ -54,4 +56,13 @@ public class Emitter : MonoBehaviour {
 
     // calls setPoint
     private void Refract(RaycastHit2D hit, Vector3 direction) { }
+
+    private void MakeLine() {
+        line.SetVertexCount(list.Count + 1);
+        line.SetPosition(0, transform.position);
+        for (int i=0;i<list.Count;i++) {
+            
+            line.SetPosition(i+1, list[i]);
+        }
+    }
 }
