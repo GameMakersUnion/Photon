@@ -52,7 +52,12 @@ public class Emitter : MonoBehaviour {
     }
 
     //calls setPoint at the end
-    private void Reflect(RaycastHit2D hit, Vector3 direction) { }
+    private void Reflect(RaycastHit2D hit, Vector3 direction) {
+		Vector3 normal = hit.normal;
+		Vector3 incidentVect = direction.normalized;
+		Vector3 reflectedVect = incidentVect - 2 * (Vector3.Dot (-incidentVect, normal)) * normal;
+		SetPoint (hit.point, reflectedVect);
+	}
 
     // calls setPoint
     private void Refract(RaycastHit2D hit, Vector3 direction) {
@@ -62,7 +67,7 @@ public class Emitter : MonoBehaviour {
 		Vector2 normal = hit.normal;
 		float theta = Vector2.Angle (incidentVect, normal);
 		float refractionAngle = Mathf.Asin (refractionIndexAir / refractionIndexGlass * Mathf.Sin (theta));
-		Vector3 refractionVect = new Vector3 (Mathf.Cos (refractionAngle), Mathf.Sin (refractionAngle));
+		Vector3 refractionVect = new Vector3 (Mathf.Cos (refractionAngle), Mathf.Sin (refractionAngle), 0);
 		SetPoint (hit.point, refractionVect);
 	}
 
