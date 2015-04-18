@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class Emitter : MonoBehaviour {
     LineRenderer line;
     List<Vector3> list = new List<Vector3>();
+    Vector3 initialLightDir;
+    bool isOutsideScreen;
 	// Use this for initialization
 	void Start () {
         line = GetComponent<LineRenderer>();
-        line.SetVertexCount(2);
+        line.SetVertexCount(1);
         line.SetPosition(0, transform.position);
+        initialLightDir = new Vector3(1, 0);
+        isOutsideScreen = false;
 	}
 	
 	// Update is called once per frame
@@ -18,37 +22,44 @@ public class Emitter : MonoBehaviour {
         Vector3 cursorPos = Input.mousePosition;
         Vector3 clickPosAtCamera = Camera.main.ScreenToWorldPoint(cursorPos);
         Vector3 clickPos = new Vector3(clickPosAtCamera.x, clickPosAtCamera.y, transform.position.z);
-        Debug.Log(clickPos);
+        SetPoint(transform.position, initialLightDir);
         MakeLine();
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            list.Add(clickPos);
-        }
 
 	}
 
     //is called recursively to draw the beam of light
-    public void SetPoint(Vector3 origin, Vector3 direction) {
+    public void SetPoint(Vector3 origin, Vector3 direction)
+    {
+        Debug.Log(isOutsideScreen);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction);
-
-        switch (hit.collider.tag)
+        if (!isOutsideScreen)
         {
-            case "Solid":
-                list.Add(hit.point);
-                break;
-            case "Reflect":
-                list.Add(hit.point);
-                Reflect(hit, direction);
-                break;
-            case "Refract":
-                list.Add(hit.point);
-                Refract(hit, direction);
-                break;
-            default:
-                break;
-        }
+            if (hit.collider != null)
+            {
+                switch (hit.collider.tag)
+                {
+                    case "Solid":
+                        list.Add(hit.point);
+                        break;
+                    case "Reflect":
+                        list.Add(hit.point);
+                        Reflect(hit, direction);
+                        break;
+                    case "Refract":
+                        list.Add(hit.point);
+                        Refract(hit, direction);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
+            else
+            {
+                list.Add(origin + direction * Screen.width);
+                isOutsideScreen = true;
+            }
+        }
     }
 
     //calls setPoint at the end
