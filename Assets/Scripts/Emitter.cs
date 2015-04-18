@@ -33,9 +33,7 @@ public class Emitter : MonoBehaviour
             list.Add(transform.position);
             isOutsideScreen = false;
             pastHit = null;
-            SetPoint(transform.position, initialLightDir);
         }
-        
         Vector3 cursorPos = Input.mousePosition;
         Vector3 clickPosAtCamera = Camera.main.ScreenToWorldPoint(cursorPos);
         Vector3 clickPos = new Vector3(clickPosAtCamera.x, clickPosAtCamera.y, transform.position.z);
@@ -61,7 +59,9 @@ public class Emitter : MonoBehaviour
                             break;
                         case "Reflect":
                             list.Add(hit.point);
-                            Reflect(hit, direction);
+                            //Reflect(hit, direction);
+                            Vector3 v = Vector3.Reflect(direction, hit.normal);
+                            SetPoint(hit.point, v);
                             break;
                         case "Refract":
                             list.Add(hit.point);
@@ -88,7 +88,7 @@ public class Emitter : MonoBehaviour
         Vector2 incidentVect = direction.normalized;
         Vector2 reflectedVect = incidentVect - 2 * (Vector2.Dot(incidentVect, normal)) * normal;
         SetPoint(hit.point, reflectedVect);
-        // list.Add(reflectedVect * 10);
+        //list.Add(reflectedVect * 10);
     }
 
     // calls setPoint
