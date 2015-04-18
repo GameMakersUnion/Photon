@@ -2,23 +2,39 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Emitter : MonoBehaviour {
+public class Emitter : MonoBehaviour
+{
     LineRenderer line;
     List<Vector3> list = new List<Vector3>();
     Vector3 initialLightDir;
     bool isOutsideScreen;
-    RaycastHit2D pastHit;
-	// Use this for initialization
-	void Start () {
+    RaycastHit2D? pastHit;
+    Vector3 prevPos;
+    // Use this for initialization
+    void Start()
+    {
         line = GetComponent<LineRenderer>();
         line.SetVertexCount(1);
         line.SetPosition(0, transform.position);
-        initialLightDir = new Vector3(1, 0);
+        initialLightDir = new Vector3(1, 1);
         isOutsideScreen = false;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        prevPos = transform.position;
+        //SetPoint(transform.position, initialLightDir);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+        if (prevPos != transform.position)
+        {
+            prevPos = transform.position;
+            list.Clear();
+            list.Add(transform.position);
+            isOutsideScreen = false;
+            pastHit = null;
+            SetPoint(transform.position, initialLightDir);
+        }
         
         Vector3 cursorPos = Input.mousePosition;
         Vector3 clickPosAtCamera = Camera.main.ScreenToWorldPoint(cursorPos);
@@ -26,19 +42,20 @@ public class Emitter : MonoBehaviour {
         SetPoint(transform.position, initialLightDir);
         MakeLine();
 
-	}
-
+    }
+    RaycastHit2D hit;
     //is called recursively to draw the beam of light
     public void SetPoint(Vector3 origin, Vector3 direction)
     {
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction);
-        if (!isOutsideScreen)
-        {
-            if (hit.collider != null )
-            {
-                if (hit != pastHit) {
-                    switch (hit.collider.tag)
-                    {
+        hit = Physics2D.Raycast(origin, direction);
+        Debug.Log(hit.distance);
+        if (!isOutsideScreen) {
+            if (hit.collider != null) {
+                if (hit == pastHit || ! (pastHit == null)) {
+                    return;
+                }
+                else {
+                    switch (hit.collider.tag) {
                         case "Solid":
                             list.Add(hit.point);
                             break;
@@ -56,41 +73,43 @@ public class Emitter : MonoBehaviour {
                 }
                 pastHit = hit;
             }
-
             else
             {
                 list.Add(origin + direction * Screen.width);
                 isOutsideScreen = true;
             }
         }
+        else return;
     }
 
     //calls setPoint at the end
     private void Reflect(RaycastHit2D hit, Vector3 direction) {
-		Vector3 normal = hit.normal;
-		Vector3 incidentVect = direction.normalized;
-		Vector3 reflectedVect = incidentVect - 2 * (Vector3.Dot (-incidentVect, normal)) * normal;
-		SetPoint (hit.point, reflectedVect);
-	}
+        Vector2 normal = hit.normal;
+        Vector2 incidentVect = direction.normalized;
+        Vector2 reflectedVect = incidentVect - 2 * (Vector2.Dot(incidentVect, normal)) * normal;
+        SetPoint(hit.point, reflectedVect);
+        // list.Add(reflectedVect * 10);
+    }
 
     // calls setPoint
     private void Refract(RaycastHit2D hit, Vector3 direction) {
-		float refractionIndexAir = 1.0f;
-		float refractionIndexGlass = 1.5f;
-		Vector2 incidentVect = (Vector2)direction.normalized;
-		Vector2 normal = hit.normal;
-		float theta = Vector2.Angle (incidentVect, normal);
-		float refractionAngle = Mathf.Asin (refractionIndexAir / refractionIndexGlass * Mathf.Sin (theta));
-		Vector3 refractionVect = new Vector3 (Mathf.Cos (refractionAngle), Mathf.Sin (refractionAngle), 0);
-		SetPoint (hit.point, refractionVect);
-	}
+        float refractionIndexAir = 1.0f;
+        float refractionIndexGlass = 1.5f;
+        Vector2 incidentVect = (Vector2)direction.normalized;
+        Vector2 normal = hit.normal;
+        float theta = Vector2.Angle(incidentVect, normal);
+        float refractionAngle = Mathf.Asin(refractionIndexAir / refractionIndexGlass * Mathf.Sin(theta));
+        Vector3 refractionVect = new Vector3(Mathf.Cos(refractionAngle), Mathf.Sin(refractionAngle), 0);
+        SetPoint(hit.point, refractionVect);
+    }
 
     private void MakeLine() {
         line.SetVertexCount(list.Count + 1);
         line.SetPosition(0, transform.position);
-        for (int i=0;i<list.Count;i++) {
-            
-            line.SetPosition(i+1, list[i]);
+        for (int i = 0; i < list.Count; i++)
+        {
+            line.SetPosition(i + 1, list[i]);
         }
     }
+
 }
