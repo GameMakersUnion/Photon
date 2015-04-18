@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Solid
+  - Reflect
+  - Refract
   layers:
   - Default
   - TransparentFX

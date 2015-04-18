@@ -9,9 +9,10 @@ GameObject:
   m_Component:
   - 4: {fileID: 471110}
   - 212: {fileID: 21277432}
+  - 60: {fileID: 6057430}
   m_Layer: 0
   m_Name: Triangle
-  m_TagString: Untagged
+  m_TagString: Refractive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23,11 +24,32 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.34823084, y: -5.68486118, z: 0}
+  m_LocalPosition: {x: -.0242130756, y: -4.52738905, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!60 &6057430
+PolygonCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 156188}
+  m_Enabled: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  m_Points:
+    m_Paths:
+    - - {x: .0714285746, y: .514285743}
+      - {x: -.0714285746, y: .514285743}
+      - {x: -.528571427, y: -.314285725}
+      - {x: -.600000024, y: -.45714286}
+      - {x: -.600000024, y: -.514285743}
+      - {x: .600000024, y: -.514285743}
+      - {x: .600000024, y: -.428571433}
+      - {x: .5, y: -.242857143}
 --- !u!212 &21277432
 SpriteRenderer:
   m_ObjectHideFlags: 1
