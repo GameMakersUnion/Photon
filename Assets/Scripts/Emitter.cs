@@ -7,6 +7,7 @@ public class Emitter : MonoBehaviour {
     List<Vector3> list = new List<Vector3>();
     Vector3 initialLightDir;
     bool isOutsideScreen;
+    RaycastHit2D pastHit;
 	// Use this for initialization
 	void Start () {
         line = GetComponent<LineRenderer>();
@@ -30,28 +31,30 @@ public class Emitter : MonoBehaviour {
     //is called recursively to draw the beam of light
     public void SetPoint(Vector3 origin, Vector3 direction)
     {
-        Debug.Log(isOutsideScreen);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction);
         if (!isOutsideScreen)
         {
-            if (hit.collider != null)
+            if (hit.collider != null )
             {
-                switch (hit.collider.tag)
-                {
-                    case "Solid":
-                        list.Add(hit.point);
-                        break;
-                    case "Reflect":
-                        list.Add(hit.point);
-                        Reflect(hit, direction);
-                        break;
-                    case "Refract":
-                        list.Add(hit.point);
-                        Refract(hit, direction);
-                        break;
-                    default:
-                        break;
+                if (hit != pastHit) {
+                    switch (hit.collider.tag)
+                    {
+                        case "Solid":
+                            list.Add(hit.point);
+                            break;
+                        case "Reflect":
+                            list.Add(hit.point);
+                            Reflect(hit, direction);
+                            break;
+                        case "Refract":
+                            list.Add(hit.point);
+                            Refract(hit, direction);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                pastHit = hit;
             }
 
             else
