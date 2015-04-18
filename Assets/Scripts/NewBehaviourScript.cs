@@ -15,5 +15,6 @@ public class NewBehaviourScript : MonoBehaviour {
         Vector3 clickPosAtCamera = Camera.main.ScreenToWorldPoint(cursorPos);
         Vector3 clickPos = new Vector3(clickPosAtCamera.x, clickPosAtCamera.y, transform.position.z);
         Debug.Log(clickPos);
+
 	}
 }
