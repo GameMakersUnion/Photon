@@ -1,22 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 
-public class EmitterIan : MonoBehaviour
+public class EmitterIan : LightInteractable
 {
+
+    public Material material;
+
     LineRenderer line;
     List<Vector3> list = new List<Vector3>();
     Vector3 initialLightDir;
     bool isOutsideScreen;
     RaycastHit2D pastHit;
+    Color color;
+
     // Use this for initialization
     void Start()
     {
         line = GetComponent<LineRenderer>();
         line.SetVertexCount(1);
         line.SetPosition(0, transform.position);
-        initialLightDir = new Vector3(1, 0);
+        initialLightDir = Vector3.right; //new Vector3(1, 0);
         isOutsideScreen = false;
+
+        color = GetComponent<SpriteRenderer>().color;
+        GetComponent<LineRenderer>().SetColors(color, color);
+
     }
 
     // Update is called once per frame
@@ -33,64 +43,72 @@ public class EmitterIan : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.Raycast(origin, direction);
 
-        if (hit.collider != null)
-        {
-            if (hit != pastHit)
-            {
-                switch (hit.collider.tag)
-                {
-                    case "Solid":
-                        list.Add(hit.point);
-                        break;
-                    case "Reflect":
-                        list.Add(hit.point);
-                        Reflect(hit, direction);
-                        break;
-                    case "Refract":
-                        list.Add(hit.point);
-                        Refract(hit, direction);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            pastHit = hit;
-        }
-
-        else
+        //hit nothing!
+        if (hit.collider == null)
         {
             list.Add(origin + direction * Screen.width);
             isOutsideScreen = true;
+            return;
+        }
+
+        LightInteractable li = hit.collider.GetComponent<LightInteractable>();
+        if (li == null)
+        {
+            Debug.LogWarning("<color=maroon>Your collider on " + hit.collider.name + " is missing a " + typeof(LightInteractable).Name + " component, dumb-nugget!</color>");
+            list.Add(origin + direction * Screen.width);
+            isOutsideScreen = true;
+            return;
         }
 
 
-        if (!isOutsideScreen)
+        //hit somethign
+        else 
         {
 
+            switch (hit.collider.tag)
+            {
+                case "Solid":
+                    list.Add(hit.point);
+                    break;
+                case "Reflect":
+                    list.Add(hit.point);
+                    Debug.Log("Re flect!!");
+                    break;
+                case "Refract":
+                    list.Add(hit.point);
+                    Debug.Log("RE FRACT");
+                    break;
+                case "Switch":
+                    list.Add(hit.point);
+                    //hit.collider.GetComponent<SpriteRenderer>().color = color;
+                    hit.collider.GetComponent<Switch>().ToggleSwitch(color);
+                    Debug.Log(hit.collider.name);
+                    break;
+                case "Button":
+                    list.Add(hit.point);
+                    //hit.collider.GetComponent<SpriteRenderer>().color = color;
+                    hit.collider.GetComponent<Button>().SetButton(true, color);
+                    Debug.Log(hit.collider.name);
+                    break;
+                default:
+                    Debug.LogWarning("<color=maroon>Tag missing on " + hit.collider.name +"</color>");
+                    break;
+            }
+            isOutsideScreen = false;
+
+            //sample checks you can use to refactor your code
+            if (li.passable == true)
+            {
+                Debug.Log("TRUE");
+            }
+            else
+            {
+                Debug.Log("FALSE");
+            }
+
         }
     }
 
-    //calls setPoint at the end
-    private void Reflect(RaycastHit2D hit, Vector3 direction)
-    {
-        Vector3 normal = hit.normal;
-        Vector3 incidentVect = direction.normalized;
-        Vector3 reflectedVect = incidentVect - 2 * (Vector3.Dot(-incidentVect, normal)) * normal;
-        SetPoint(hit.point, reflectedVect);
-    }
-
-    // calls setPoint
-    private void Refract(RaycastHit2D hit, Vector3 direction)
-    {
-        float refractionIndexAir = 1.0f;
-        float refractionIndexGlass = 1.5f;
-        Vector2 incidentVect = (Vector2)direction.normalized;
-        Vector2 normal = hit.normal;
-        float theta = Vector2.Angle(incidentVect, normal);
-        float refractionAngle = Mathf.Asin(refractionIndexAir / refractionIndexGlass * Mathf.Sin(theta));
-        Vector3 refractionVect = new Vector3(Mathf.Cos(refractionAngle), Mathf.Sin(refractionAngle), 0);
-        SetPoint(hit.point, refractionVect);
-    }
 
     private void MakeLine()
     {
@@ -98,7 +116,6 @@ public class EmitterIan : MonoBehaviour
         line.SetPosition(0, transform.position);
         for (int i = 0; i < list.Count; i++)
         {
-
             line.SetPosition(i + 1, list[i]);
         }
     }
