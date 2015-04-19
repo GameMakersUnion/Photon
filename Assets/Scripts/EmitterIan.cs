@@ -13,6 +13,8 @@ public class EmitterIan : LightInteractable
     Vector3 initialLightDir;
     bool isOutsideScreen;
     RaycastHit2D pastHit;
+    Color color;
+
     // Use this for initialization
     void Start()
     {
@@ -21,6 +23,10 @@ public class EmitterIan : LightInteractable
         line.SetPosition(0, transform.position);
         initialLightDir = Vector3.right; //new Vector3(1, 0);
         isOutsideScreen = false;
+
+        color = GetComponent<SpriteRenderer>().color;
+        GetComponent<LineRenderer>().SetColors(color, color);
+
     }
 
     // Update is called once per frame
@@ -54,17 +60,9 @@ public class EmitterIan : LightInteractable
             return;
         }
 
-        if (li.passable == true)
-        {
-            Debug.Log("TRUE");
-        }
-        else
-        {
-            Debug.Log("FALSE");
-        }
 
         //hit somethign
-        //else 
+        else 
         {
 
             switch (hit.collider.tag)
@@ -82,12 +80,31 @@ public class EmitterIan : LightInteractable
                     break;
                 case "Switch":
                     list.Add(hit.point);
+                    //hit.collider.GetComponent<SpriteRenderer>().color = color;
+                    hit.collider.GetComponent<Switch>().ToggleSwitch(color);
+                    Debug.Log(hit.collider.name);
+                    break;
+                case "Button":
+                    list.Add(hit.point);
+                    //hit.collider.GetComponent<SpriteRenderer>().color = color;
+                    hit.collider.GetComponent<Button>().SetButton(true, color);
                     Debug.Log(hit.collider.name);
                     break;
                 default:
+                    Debug.LogWarning("<color=maroon>Tag missing on " + hit.collider.name +"</color>");
                     break;
             }
             isOutsideScreen = false;
+
+            //sample checks you can use to refactor your code
+            if (li.passable == true)
+            {
+                Debug.Log("TRUE");
+            }
+            else
+            {
+                Debug.Log("FALSE");
+            }
 
         }
     }

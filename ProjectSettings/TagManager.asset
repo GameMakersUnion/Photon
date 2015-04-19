@@ -8,6 +8,7 @@ TagManager:
   - Reflect
   - Refract
   - Switch
+  - Button
   layers:
   - Default
   - TransparentFX

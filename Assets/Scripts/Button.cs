@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Switch : LightInteractable {
+public class Button : LightInteractable {
 
     private bool state_ = false;
     public bool state
@@ -11,13 +11,11 @@ public class Switch : LightInteractable {
     }
 
     private SpriteRenderer sr;
-    private Color origColor; 
 
 	// Use this for initialization
 	void Start () {
         passable = true;
 	    sr = GetComponent<SpriteRenderer>();
-	    origColor = sr.color;
 	}
 	
 	// Update is called once per frame
@@ -25,10 +23,10 @@ public class Switch : LightInteractable {
 	
 	}
 
-    public void ToggleSwitch(Color color)
+    public void SetButton(bool state, Color color)
     {
-        state_ = !state_;
-        passable = !passable;
-        sr.color = (state) ? color : origColor;
+        state_ = state;
+        sr.color = color;
     }
+    
 }
