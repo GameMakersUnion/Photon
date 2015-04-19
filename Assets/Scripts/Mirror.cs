@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Mirror : MonoBehaviour {
+public class Mirror : LightInteractable {
 
 	// Use this for initialization
 	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        passable = true;
+    }
+
+    // Update is called once per frame
+    void Update () {
 	
 	}
 }

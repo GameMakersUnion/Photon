@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Prism : MonoBehaviour
+public class Prism : LightInteractable
 {
 
     public float refractionIdx;
 
 	// Use this for initialization
 	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        passable = true;
+    }
+
+    // Update is called once per frame
+    void Update () {
 	
 	}
 }
