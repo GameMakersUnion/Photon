@@ -7,5 +7,5 @@ Currently has reflection working on surfaces designated so -- see Calvin scene f
   ![readme image][1]
   [1]: https://raw.githubusercontent.com/GameMakersUnion/Photon/master/README/README_ALPHA_02.png 
 
-    ![readme image][2]
+  ![readme image][2]
   [2]: https://raw.githubusercontent.com/GameMakersUnion/Photon/master/README/README_ALPHA_05.png 
